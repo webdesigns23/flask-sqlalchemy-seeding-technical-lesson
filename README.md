@@ -426,7 +426,7 @@ The `limit()` function restricts the number of rows returned from the query:
 [<Pet 1, Victoria, Dog>, <Pet 2, Michael, Cat>, <Pet 3, Kristie, Chicken>]
 ```
 
-### Task 4:
+### Task 4: Document and Maintain
 
 Best Practice documentation steps:
 * Add comments to the code to explain purpose and logic, clarifying intent and functionality of your code to other developers.
