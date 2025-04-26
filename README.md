@@ -111,7 +111,7 @@ $ flask shell
 >>>
 ```
 
-![new pet table](https://curriculum-content.s3.amazonaws.com/7159/python-p4-v2-flask-sqlalchemy/pet_table.png)
+![new pet table](/assets/pet_table.png)
 
 NOTE: At any time during the lesson, you can delete the `instance` and
 `migrations` folders and re-execute the three `flask db` commands (init,
@@ -177,7 +177,7 @@ $ flask shell
 
 We can also use the SQLite Viewer (hit the refresh button) to see the new rows:
 
-![insert 3 rows in pets table](https://curriculum-content.s3.amazonaws.com/7159/python-p4-v2-flask-sqlalchemy/3pets.png)
+![insert 3 rows in pets table](/assets/insert_3_rows_pets_table.png)
 
 Let's update `seed.py` to add a fourth pet, a snake named "Slither":
 
@@ -281,7 +281,7 @@ $ flask shell
 >>>
 ```
 
-![4 rows inserted in pet table](https://curriculum-content.s3.amazonaws.com/7159/python-p4-v2-flask-sqlalchemy/4pets.png)
+![4 rows inserted in pet table](/assets/insert_4_rows_pets_table.png)
 
 **NOTE**: If you have multiple tables in your database, you'll need to delete first the rows in the tables that have foreign key constraints before deleting the rows in the tables that have the primary key constraints. For example, if you have a `users` table and a `pets` table, and the `pets` table has a foreign key constraint on the `user_id` column, you'll need to delete the rows in the `pets` table before deleting the rows in the `users` table.
 
@@ -381,7 +381,7 @@ $ flask shell
 >>>
 ```
 
-![insert 10 pets in table](https://curriculum-content.s3.amazonaws.com/7159/python-p4-v2-flask-sqlalchemy/10pets.png)
+![insert 10 pets in table](/assets/insert_10_pets_table.png)
 
 #### Step 6: Query the Sample Data
 
