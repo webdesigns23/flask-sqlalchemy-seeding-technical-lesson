@@ -1,19 +1,4 @@
-# Seeding a Database : Code-Along
-
-## Learning Goals
-
-- Initialize a database with sample data
-- Use the `Faker` package to generate random data
-
----
-
-## Key Vocab
-
-- **Seed**: to fill a database with an initial set of data.
-
----
-
-## Introduction
+# Technical Lesson: Seeding a Database
 
 When working with any application involving a database, it's a good idea to
 populate your database with some realistic sample data when you are working on
@@ -22,9 +7,36 @@ process of adding sample data to the database as **"seeding"** the database. In
 this lesson, we'll see some of the conventions and built-in features that make
 it easy to seed data in an Flask-SQLAlchemy application.
 
----
+## Why Do We Need Seed Data?
 
-## Setup
+In a previous lesson, we used the Flask Shell to call Flask-SQLAlchemy
+functions to insert rows into the `pets` table. Since the rows are saved in the
+database rather than in Python's memory, the data persists even after we exit
+out of the Flask shell.
+
+But how can we share this data with other developers who are working on the same
+application? How could we recover this data if our development database was
+deleted? We could include the `app.db` database file in version control, but
+this is generally considered bad practice. Since our database might get quite
+large over time, it's not practical to include it in version control (you'll
+even notice that in our Flask-SQLAlchemy projects' .gitignore file, we include a
+line that instructs Git not to track any .sqlite3 or .db files). There's got to
+be a better way!
+
+The common approach to this problem is that instead of sharing the actual
+database file with other developers, we share the instructions for populating
+data in the database. By convention, the way we do this is by creating a Python
+file, `seed.py`, which is used to populate our database with sample data.
+
+## Tools & Resources
+- [GitHub Repo](https://github.com/learn-co-curriculum/flask-sqlalchemy-seeding-technical-lesson)
+- [SQLAlchemy Query Documentation](https://docs.sqlalchemy.org/en/14/orm/query.html)
+- [Faker Documentation](https://faker.readthedocs.io/en/master/)
+- [random — Generate pseudo-random numbers - Python](https://docs.python.org/3/library/random.html)
+
+## Instructions
+
+### Setup
 
 This lesson is a code-along, so fork and clone the repo.
 
@@ -44,6 +56,36 @@ $ cd server
 $ export FLASK_APP=app.py
 $ export FLASK_RUN_PORT=5555
 ```
+
+### Task 1: Define the Problem
+
+When developing a web application, you need sample data to test features, validate database relationships, and simulate real-world usage.
+However, manually entering data through a web interface or inserting records one by one in the Flask shell is tedious and inefficient — and once your database is deleted, any manually added data is lost.
+
+Sharing full database files (like app.db) through version control is bad practice because:
+* Database files can become large and cumbersome.
+* Databases might contain environment-specific settings.
+* Version conflicts and data loss are common if database files are tracked by Git.
+
+Your Challenge:
+
+Create a repeatable, automated way to populate a database with realistic sample data by writing a seeding script (seed.py). This script should insert sample records that can easily be regenerated, refreshed, and expanded as needed.
+
+### Task 2: Determine the Design
+
+The design for seeding the database will follow these principles:
+
+* Script-Based Seeding: Create a Python script (seed.py) that programmatically inserts data into tables using ORM (Flask-SQLAlchemy) methods.
+* Application Context: Use with app.app_context(): to ensure database operations are connected to the current Flask app.
+* Data Reset Before Seeding: Before adding new records, delete existing rows from the relevant tables (Pet.query.delete()), ensuring the database does not accumulate duplicate records every time you reseed.
+* Flexible Data Insertion: Seed both fixed, hardcoded records (e.g., 4 predefined pets) and randomized data (e.g., using Faker) to mimic real-world datasets and test application robustness.
+* Modular Growth: Design the seed script so that future developers can easily add new models and seeding logic without rewriting existing parts.
+
+This approach ensures developers can consistently rebuild sample databases without manual intervention, making local development, testing, and collaborative work much faster and safer.
+
+### Task 3: Develop, Test, and Refine the Code
+
+#### Step 1: Create the Database and Table
 
 Let's create the database `app.db` with an empty `pets` table:
 
@@ -75,26 +117,7 @@ NOTE: At any time during the lesson, you can delete the `instance` and
 `migrations` folders and re-execute the three `flask db` commands (init,
 migrate, upgrade) to recreate the initial version of the database.
 
-## Why Do We Need Seed Data?
-
-In the previous lesson, we used the Flask Shell to call Flask-SQLAlchemy
-functions to insert rows into the `pets` table. Since the rows are saved in the
-database rather than in Python's memory, the data persists even after we exit
-out of the Flask shell.
-
-But how can we share this data with other developers who are working on the same
-application? How could we recover this data if our development database was
-deleted? We could include the `app.db` database file in version control, but
-this is generally considered bad practice. Since our database might get quite
-large over time, it's not practical to include it in version control (you'll
-even notice that in our Flask-SQLAlchemy projects' .gitignore file, we include a
-line that instructs Git not to track any .sqlite3 or .db files). There's got to
-be a better way!
-
-The common approach to this problem is that instead of sharing the actual
-database file with other developers, we share the instructions for populating
-data in the database. By convention, the way we do this is by creating a Python
-file, `seed.py`, which is used to populate our database with sample data.
+### Step 2: Create a Seed File with Example Table Data
 
 Take a look at the file `server/seed.py`, which will insert 3 rows into the
 `pets` table:
@@ -131,12 +154,16 @@ The code creates an application context with the method call
 3. Calls `db.session.add_all()` to insert all pets in the list into the table.
 4. Calls `db.session.commit()` to commit the transaction.
 
+#### Step 3: Run the Seed File
+
 Assuming you are in the `server` directory, type the following to seed the
 database:
 
 ```console
 $ python seed.py
 ```
+
+#### Step 4: Confirm Seed Data is in the Database
 
 Let's use the Flask shell to query the `pets` table and confirm the 3 pets were
 added:
@@ -207,6 +234,8 @@ Notice there are 7 rows rather than 4! Each time we run `python seed.py`, we end
 up adding rows into the existing table. Let's update `seed.py ` to delete all
 rows in the table before adding new rows.
 
+#### Step 5: Reset the Database When Reseeding
+
 Add the statement `Pet.query.delete()` as the first step in the seeding process:
 
 ```py
@@ -256,7 +285,7 @@ $ flask shell
 
 **NOTE**: If you have multiple tables in your database, you'll need to delete first the rows in the tables that have foreign key constraints before deleting the rows in the tables that have the primary key constraints. For example, if you have a `users` table and a `pets` table, and the `pets` table has a foreign key constraint on the `user_id` column, you'll need to delete the rows in the `pets` table before deleting the rows in the `users` table.
 
-## Generating Randomized Data
+#### Step 5: Generating Randomized Data (Optional)
 
 One challenge of seeding a database is thinking up lots of sample data.
 Ultimately, when you're developing an application, it's helpful to have
@@ -354,7 +383,7 @@ $ flask shell
 
 ![insert 10 pets in table](https://curriculum-content.s3.amazonaws.com/7159/python-p4-v2-flask-sqlalchemy/10pets.png)
 
-## Querying the sample data
+#### Step 6: Query the Sample Data
 
 Let's try out a few queries using `filter_by`. Of course, your results will
 differ since the data is random.
@@ -397,16 +426,40 @@ The `limit()` function restricts the number of rows returned from the query:
 [<Pet 1, Victoria, Dog>, <Pet 2, Michael, Cat>, <Pet 3, Kristie, Chicken>]
 ```
 
-## Conclusion
+### Task 4:
 
-In this lesson, we learned the importance of having a seed file to quickly set
-up the database with sample data. We also learned how to use the Faker library
-to quickly generate randomized seed data.
+Best Practice documentation steps:
+* Add comments to the code to explain purpose and logic, clarifying intent and functionality of your code to other developers.
+* Update README text to reflect the functionality of the application following https://makeareadme.com. 
+  * Add screenshot of completed work included in Markdown in README.
+* Delete any stale branches on GitHub
+* Remove unnecessary/commented out code
+* If needed, update git ignore to remove sensitive data
 
----
+## Considerations
 
-## Resources
+When designing and using a seed script, keep the following important considerations in mind:
 
-- [SQLAlchemy Query Documentation](https://docs.sqlalchemy.org/en/14/orm/query.html)
-- [Faker Documentation](https://faker.readthedocs.io/en/master/)
-- [random — Generate pseudo-random numbers - Python](https://docs.python.org/3/library/random.html)
+* Data Deletion Order Matters:
+    * If tables have foreign key relationships, always delete records from child tables (tables with foreign keys) before parent tables to avoid database constraint errors.
+
+* Resetting Data:
+    * Be careful when using .delete() in a production-like environment — seed scripts should only be used in development, staging, or testing environments to avoid unintended data loss.
+
+* Randomized vs. Hardcoded Data:
+    * Hardcoded examples are great for predictable testing.
+    * Randomized examples (using Faker) provide more realistic scenarios but may make certain tests less deterministic unless constrained carefully.
+
+* Scalability:
+    * As applications grow, seed scripts should be modular — separate seeding by model or feature to make maintenance easier.
+
+* Version Control Best Practices:
+    * Never commit or share database files (.db, .sqlite3) — always use scripts like seed.py and migration files to recreate databases on different machines.
+
+* Testing Seed Data:
+    * Always run queries after seeding to ensure that:
+        * Expected records are created.
+        * Relationships (if any) are intact.
+        * Data types match what your app expects.
+
+By using structured, automated seeding, you ensure the development team always has a reliable baseline for building, testing, and debugging new features.
