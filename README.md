@@ -285,7 +285,7 @@ $ flask shell
 
 **NOTE**: If you have multiple tables in your database, you'll need to delete first the rows in the tables that have foreign key constraints before deleting the rows in the tables that have the primary key constraints. For example, if you have a `users` table and a `pets` table, and the `pets` table has a foreign key constraint on the `user_id` column, you'll need to delete the rows in the `pets` table before deleting the rows in the `users` table.
 
-#### Step 5: Generating Randomized Data (Optional)
+#### Step 5a: Generating Randomized Data (Optional)
 
 One challenge of seeding a database is thinking up lots of sample data.
 Ultimately, when you're developing an application, it's helpful to have
