@@ -426,6 +426,18 @@ The `limit()` function restricts the number of rows returned from the query:
 [<Pet 1, Victoria, Dog>, <Pet 2, Michael, Cat>, <Pet 3, Kristie, Chicken>]
 ```
 
+#### Step 7: Commit, Push, and (if using branching) Merge
+
+* Commit and Push your final code to GitHub
+
+```bash
+git add .
+git commit -m ""
+git push origin <main or feature branch name>
+```
+
+* Open a PR and Merge if using a feature branch
+
 ### Task 4: Document and Maintain
 
 Best Practice documentation steps:
