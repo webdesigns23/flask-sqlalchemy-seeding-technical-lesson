@@ -432,7 +432,7 @@ The `limit()` function restricts the number of rows returned from the query:
 
 ```bash
 git add .
-git commit -m ""
+git commit -m "final solution"
 git push origin <main or feature branch name>
 ```
 
